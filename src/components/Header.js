@@ -4,8 +4,21 @@ import {
     SearchIcon,
     ShoppingCartIcon,
 } from "@heroicons/react/outline";
+import {signIn, signOut, useSession} from "next-auth/client";
+// Routing
+import { useRouter } from "next/router";
+import { selectItems } from "../slices/basketSlice";
+import { useSelector } from "react-redux";
 
 function Header() {
+    const [session] = useSession();
+
+    {/** When the user clicks on the back or forward button the browser will show the page in the stack */}
+    const router = useRouter();
+
+    // Pull items from the Global Store
+    const items = useSelector(selectItems);
+
     return (
         <header>
             {/** Top Nav */}
@@ -13,7 +26,9 @@ function Header() {
                 {/**sm:flex-grow-0 When small screen is passed image container doesn't flex anymore */}
                 <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
                     {/** We need to whitelist where we're pulling the image from on next.config.js */}
+                    {/** When the user clicks on the amazon image it will take them to Home Page */}
                     <Image 
+                    onClick={() => router.push("/")}
                     src="https://links.papareact.com/f90"
                     alt=""
                     width={150}
@@ -32,19 +47,27 @@ function Header() {
 
                 {/**Right Section */}
                 <div className="text-white flex items-center text-xs space-x-6 mx-6 whitespace-nowrap">
-                    <div className="link">
-                        <p>Hello Mohamed Gueye</p>
+                    {session ? (
+                <div>
+                    <p>Hello, {session.user.name}</p>
+                    <p className="font-extrabold md:text-sm">Account & Lists</p>
+                    <p onClick={signOut} className="link">Sign Out</p>
+                </div>
+                    ) : (
+                        <div onClick={signIn} className="link">
+                        <p>Hello, Sign In</p>
                         <p className="font-extrabold md:text-sm">Account & Lists</p>
                     </div>
+                    )}
 
                     <div className="link">
                         <p>Returns</p>
                         <p className="font-extrabold md:text-sm">& Orders</p>
                     </div>
 
-                    <div className="relative link flex items-center">
+                    <div onClick={() => router.push("/checkout")} className="relative link flex items-center">
 
-                        <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">0</span>
+                        <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">{items.length}</span>
 
                         <ShoppingCartIcon className="h-10" />
                         <p className="font-extrabold md:text-sm hidden md:inline mt-2">Basket</p>

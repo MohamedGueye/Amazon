@@ -2,11 +2,31 @@ import { StarIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { useState } from "react";
 import Currency from "react-currency-formatter";
+import { useDispatch } from "react-redux";
+import { addToBasket } from "../slices/basketSlice";
 
 const MAX_RATING = 5;
 const MIN_RATING = 1;
 
 function Product( {id, title, price, description, category, image} ) {
+    // Object that will allows to shoot into the global store
+    const dispatch = useDispatch();
+
+    const addItemToBasket = () => {
+        // Push item into Global Store
+        const product = {
+            id,
+            title,
+            price,
+            description,
+            category,
+            image,
+            hasPrime,
+        };
+
+        dispatch(addToBasket(product))
+    };
+
     const [rating] = useState(
         Math.floor(Math.random() * (MAX_RATING - MIN_RATING + 1)) + MIN_RATING
     );
@@ -43,7 +63,7 @@ function Product( {id, title, price, description, category, image} ) {
                 </div>
             )}
 
-            <button className="mt-auto button">Add to Basket</button>
+            <button onClick={addItemToBasket} className="mt-auto button">Add to Basket</button>
         </div>
     )
 }
