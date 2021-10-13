@@ -47,7 +47,7 @@ function CheckoutProduct({
                     .map((_,i) => (
                         <StarIcon className="h-5 text-yellow-500"/>
                     ))}
-            </div>
+                </div>
 
             <p className="text-xs my-2 line-clamp-3">{description}</p>
             <Currency quantity={price} currency='USD' />
